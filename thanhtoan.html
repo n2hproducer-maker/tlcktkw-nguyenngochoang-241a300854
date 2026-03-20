@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán - Đông Y Đường</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS Giao diện Thanh Toán - Đen Huyền Bí */
+        body { background-color: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; }
+        .breadcrumb { padding: 20px 5%; color: #888; font-size: 0.95rem; background: #111; border-bottom: 1px solid #222;}
+        .breadcrumb a { color: var(--primary-color, #7cb342); text-decoration: none; font-weight: bold;}
+        
+        .checkout-layout { display: flex; gap: 40px; padding: 40px 5% 80px; align-items: flex-start; }
+        
+        /* Cột trái: Form thông tin & Thanh toán */
+        .checkout-form-container { flex: 6; background: #151515; border-radius: 12px; border: 1px solid #333; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .checkout-form-container h2 { color: var(--primary-color, #7cb342); margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 8px; color: #bbb; font-size: 0.95rem; }
+        .form-group input, .form-group textarea, .form-group select { background: #0a0a0a; color: #fff; border: 1px solid #444; padding: 12px 15px; border-radius: 8px; outline: none; transition: 0.3s; font-size: 1rem; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary-color, #7cb342); box-shadow: 0 0 8px rgba(124, 179, 66, 0.2); }
+        
+        /* Phương thức thanh toán */
+        .payment-methods { margin-top: 30px; }
+        .payment-methods h3 { color: #fff; margin-bottom: 15px; font-size: 1.2rem; }
+        .payment-option { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border: 1px solid #444; border-radius: 8px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; background: #0a0a0a; }
+        .payment-option:hover { border-color: var(--primary-color, #7cb342); }
+        .payment-option.selected { border-color: var(--primary-color, #7cb342); background: rgba(124, 179, 66, 0.05); box-shadow: 0 0 10px rgba(124, 179, 66, 0.2); }
+        
+        .payment-left { display: flex; align-items: center; gap: 15px; }
+        .payment-left input[type="radio"] { accent-color: var(--primary-color, #7cb342); transform: scale(1.2); }
+        .payment-left label { color: #fff; font-weight: bold; cursor: pointer; font-size: 1.05rem; }
+        .payment-option img { height: 35px; object-fit: contain; border-radius: 4px; background-color: #fff; padding: 2px;} /* Thêm background trắng nhẹ để logo nổi trên nền đen */
+
+        /* Cột phải: Đơn hàng Mini */
+        .order-summary-mini { flex: 4; background: #151515; border-radius: 12px; border: 1px solid #333; padding: 30px; position: sticky; top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .order-summary-mini h3 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; font-size: 1.3rem; text-transform: uppercase;}
+        
+        .mini-cart-items { max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 10px;}
+        .mini-cart-items::-webkit-scrollbar { width: 5px; }
+        .mini-cart-items::-webkit-scrollbar-thumb { background: #444; border-radius: 5px; }
+        
+        .mini-item { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 15px; }
+        .mini-item img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid #444; }
+        .mini-item-info { flex: 1; }
+        .mini-item-info h4 { color: #fff; font-size: 0.95rem; margin-bottom: 5px; }
+        .mini-item-info p { color: #888; font-size: 0.85rem; }
+        .mini-item-price { color: var(--primary-color, #7cb342); font-weight: bold; }
+
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: #bbb; font-size: 1.05rem; }
+        .summary-row.total { border-top: 1px dashed #444; padding-top: 15px; color: #fff; font-size: 1.4rem; font-weight: bold; margin-top: 10px; }
+        .summary-row.total .total-price { color: var(--primary-color, #7cb342); font-size: 1.6rem; }
+        
+        .btn-place-order { width: 100%; background: var(--primary-color, #7cb342); color: #000; border: none; padding: 18px; border-radius: 8px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px;}
+        .btn-place-order:hover { background: #689f38; box-shadow: 0 0 20px rgba(124, 179, 66, 0.6); transform: translateY(-3px); }
+
+        /* Modal Đặt hàng thành công */
+        .success-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .success-content { background: #151515; padding: 50px; border-radius: 15px; text-align: center; border: 2px solid var(--primary-color, #7cb342); max-width: 500px; animation: scaleUp 0.5s ease; }
+        .success-content i { font-size: 5rem; color: var(--primary-color, #7cb342); margin-bottom: 20px; }
+        .success-content h2 { color: #fff; margin-bottom: 15px; font-size: 2rem;}
+        .success-content p { color: #aaa; margin-bottom: 30px; font-size: 1.1rem; line-height: 1.6;}
+        .btn-home { background: transparent; color: var(--primary-color, #7cb342); border: 1px solid var(--primary-color, #7cb342); padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; transition: 0.3s; display: inline-block;}
+        .btn-home:hover { background: var(--primary-color, #7cb342); color: #000; }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 992px) {
+            .checkout-layout { flex-direction: column-reverse; }
+            .checkout-form-container, .order-summary-mini { width: 100%; position: relative; top: 0; }
+            .form-row { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+    <a href="index.html" class="logo">
+        <img src="image-Photoroom.png" alt="Logo Đông Y Đường">
+        <span>ĐÔNG Y ĐƯỜNG</span>
+    </a>
+
+    <div class="main-menu"></div> 
+
+    <div class="header-actions">
+        
+        <a href="danhmuc.html" class="menu-san-pham">
+            <i class="fas fa-bars"></i> SẢN PHẨM
+        </a>
+
+        <a href="dangnhap.html" title="Tài khoản">
+            <i class="fas fa-user"></i>
+        </a>
+
+        <a href="giohang.html" title="Giỏ hàng">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">3</span>
+        </a>
+    </div>
+</header>
+    <div class="breadcrumb">
+        <a href="index.html">Trang chủ</a> » <a href="giohang.html">Giỏ hàng</a> » <span>Thanh toán</span>
+    </div>
+
+    <main class="checkout-layout">
+        
+        <div class="checkout-form-container">
+            <form id="checkoutForm">
+                <h2>1. Thông tin giao hàng</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Họ và Tên *</label>
+                        <input type="text" placeholder="Nhập họ tên đầy đủ..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại *</label>
+                        <input type="tel" placeholder="Nhập số điện thoại..." required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email (Tùy chọn)</label>
+                        <input type="email" placeholder="Nhập email để nhận hóa đơn...">
+                    </div>
+                    <div class="form-group">
+                        <label>Tỉnh/Thành phố *</label>
+                        <select required>
+                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                            <option value="hcm">Hồ Chí Minh</option>
+                            <option value="hn">Hà Nội</option>
+                            <option value="dn">Đà Nẵng</option>
+                            <option value="other">Tỉnh/Thành phố khác...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Địa chỉ chi tiết (Số nhà, Tên đường, Phường/Xã) *</label>
+                    <input type="text" placeholder="Ví dụ: 123 Đường Nguyễn Văn Cừ, Phường 4..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Ghi chú cho đơn hàng</label>
+                    <textarea rows="3" placeholder="Ghi chú thêm về thời gian giao hàng, chỉ dẫn địa chỉ..."></textarea>
+                </div>
+
+                <div class="payment-methods">
+                    <h2>2. Phương thức thanh toán</h2>
+                    
+                    <label class="payment-option selected" onclick="selectPayment(this)">
+                        <div class="payment-left">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <span>Thanh toán khi nhận hàng (COD)</span>
+                        </div>
+                        <i class="fa-solid fa-truck-fast" style="font-size: 1.5rem; color: #aaa;"></i>
+                    </label>
+
+                    <label class="payment-option" onclick="selectPayment(this)">
+                        <div class="payment-left">
+                            <input type="radio" name="payment" value="momo">
+                            <span>Ví điện tử MoMo</span>
+                        </div>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZcQPC-zWVyFOu9J2OGl0j2D220D49D0Z7BQ&s" alt="MoMo">
+                    </label>
+
+                    <label class="payment-option" onclick="selectPayment(this)">
+                        <div class="payment-left">
+                            <input type="radio" name="payment" value="vnpay">
+                            <span>Chuyển khoản qua VNPay / QR Code</span>
+                        </div>
+                        <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" alt="VNPay">
+                    </label>
+
+                    <label class="payment-option" onclick="selectPayment(this)">
+                        <div class="payment-left">
+                            <input type="radio" name="payment" value="card">
+                            <span>Thẻ Tín Dụng / Ghi Nợ (Visa, MasterCard)</span>
+                        </div>
+                        <img src="https://mnd-assets.mynewsdesk.com/image/upload/c_fill,dpr_auto,f_auto,g_auto,q_auto:good,w_1782/aay4lew2xixptrckrvtg" alt="Visa">
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-place-order" id="submitBtn">Xác Nhận Đặt Hàng <i class="fa-solid fa-check-double"></i></button>
+            </form>
+        </div>
+
+        <div class="order-summary-mini">
+            <h3>Đơn Hàng Của Bạn</h3>
+            
+            <div class="mini-cart-items" id="checkout-item-list">
+                </div>
+
+            <div class="summary-row">
+                <span>Tạm tính:</span>
+                <span id="checkout-subtotal">0đ</span>
+            </div>
+            <div class="summary-row">
+                <span>Phí vận chuyển:</span>
+                <span style="color: var(--primary-color, #7cb342);">Miễn phí</span>
+            </div>
+            
+            <div class="summary-row total">
+                <span>Tổng Thành Tiền:</span>
+                <span class="total-price" id="checkout-total">0đ</span>
+            </div>
+            <p style="text-align: right; color: #666; font-size: 0.8rem; margin-top: -5px;">(Bao gồm VAT)</p>
+        </div>
+
+    </main>
+
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <i class="fa-solid fa-circle-check"></i>
+            <h2>Đặt Hàng Thành Công!</h2>
+            <p>Cảm ơn bạn đã tin tưởng Đông Y Đường. Đơn hàng của bạn đang được hệ thống xử lý. Chuyên viên của chúng tôi sẽ sớm liên hệ để xác nhận.</p>
+            <a href="index.html" class="btn-home"><i class="fa-solid fa-house"></i> Quay Về Trang Chủ</a>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIC GIAO DIỆN THANH TOÁN ---
+
+        // Hiệu ứng chọn phương thức thanh toán
+        function selectPayment(element) {
+            const options = document.querySelectorAll('.payment-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+        }
+
+        // --- ĐỌC DỮ LIỆU TỪ GIỎ HÀNG CHUYỂN SANG ---
+        function loadCheckoutData() {
+            let cart = JSON.parse(localStorage.getItem('dongy_cart')) || [];
+            let itemList = document.getElementById('checkout-item-list');
+            
+            if (cart.length === 0) {
+                alert("Giỏ hàng của bạn đang trống! Đang chuyển hướng về cửa hàng...");
+                window.location.href = "danhmuc.html";
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                let itemTotal = item.price * item.qty;
+                total += itemTotal;
+
+                html += `
+                <div class="mini-item">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="mini-item-info">
+                        <h4>${item.name}</h4>
+                        <p>Số lượng: <strong>x${item.qty}</strong></p>
+                    </div>
+                    <div class="mini-item-price">${itemTotal.toLocaleString('vi-VN')}đ</div>
+                </div>`;
+            });
+
+            itemList.innerHTML = html;
+            document.getElementById('checkout-subtotal').innerText = total.toLocaleString('vi-VN') + 'đ';
+            document.getElementById('checkout-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+        }
+
+        // --- XỬ LÝ SỰ KIỆN BẤM ĐẶT HÀNG ---
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang Xử Lý Hệ Thống...';
+            btn.style.pointerEvents = 'none'; 
+            btn.style.background = '#444';
+            btn.style.color = '#fff';
+
+            setTimeout(() => {
+                // Làm sạch bộ nhớ
+                localStorage.removeItem('dongy_cart');
+                
+                // Hiển thị Popup
+                document.getElementById('successModal').style.display = 'flex';
+            }, 2000);
+        });
+
+        // Tự động load dữ liệu
+        window.addEventListener('DOMContentLoaded', loadCheckoutData);
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            // 1. IN TÊN RA MÀN HÌNH
+            const theHienThiTen = document.getElementById("ten-hien-thi"); // Nhớ thêm id này vào thẻ h2
+            if (theHienThiTen) {
+                const tenDaLuu = localStorage.getItem("tenNguoiDung");
+                if (tenDaLuu) {
+                    theHienThiTen.textContent = "Xin chào, " + tenDaLuu + "!";
+                } else {
+                    theHienThiTen.textContent = "Xin chào, Khách hàng thân thiết!";
+                }
+            }
+
+            // 2. XỬ LÝ NÚT ĐĂNG XUẤT
+            const btnLogout = document.getElementById("btn-logout");
+            if (btnLogout) {
+                btnLogout.addEventListener("click", function() {
+                    localStorage.removeItem("daDangNhap");
+                    // Tùy chọn: Xóa luôn tên trong kho nếu muốn đăng xuất là quên luôn
+                    // localStorage.removeItem("tenNguoiDung"); 
+                    alert("Bạn đã đăng xuất thành công!");
+                    window.location.href = "index.html"; // Trở về trang chủ
+                });
+            }
+
+            // 3. HIỆU ỨNG THẺ 3D NGHIÊNG THEO CHUỘT
+            const accountCard = document.querySelector('.account-card');
+            if (accountCard) {
+                accountCard.addEventListener('mousemove', function(e) {
+                    const xAxis = (window.innerWidth / 2 - e.pageX) / 30;
+                    const yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+                    accountCard.style.transform = `perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                });
+
+                accountCard.addEventListener('mouseleave', function() {
+                    accountCard.style.transition = "all 0.5s ease";
+                    accountCard.style.transform = `perspective(1000px) rotateY(0deg) rotateX(0deg)`;
+                });
+
+                accountCard.addEventListener('mouseenter', function() {
+                    accountCard.style.transition = "none";
+                });
+            }
+
+        });
+    </script>
+</body>
+</body>
+</html>

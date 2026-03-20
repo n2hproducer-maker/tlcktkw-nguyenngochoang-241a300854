@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài Khoản - Đông Y Đường</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="image-Photoroom.png" alt="Logo Đông Y Đường">
+            <span>ĐÔNG Y ĐƯỜNG</span>
+        </a>
+        <div class="main-menu"></div> 
+        <div class="header-actions">
+            <a href="danhmuc.html" class="menu-san-pham">
+                <i class="fas fa-bars"></i> SẢN PHẨM
+            </a>
+            <a href="taikhoan.html" title="Tài khoản" style="color: #7cb342;">
+                <i class="fas fa-user"></i>
+            </a>
+            <a href="giohang.html" title="Giỏ hàng">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <div style="padding: 150px 5% 100px; min-height: 80vh; display: flex; justify-content: center; align-items: center;">
+        <div style="background-color: var(--color-bg-surface-1, #0a0a0a); padding: 50px; border-radius: 16px; border: 1px solid var(--color-bg-surface-4, #222); box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; width: 100%; max-width: 600px;">
+            
+            <div style="width: 100px; height: 100px; background-color: #7cb342; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; font-size: 40px; color: #000;">
+                <i class="fas fa-user-tie"></i>
+            </div>
+
+            <h2 class="account-greeting" id="ten-hien-thi">Xin chào!</h2>
+            <p style="color: #aaa; margin-bottom: 40px;">Chào mừng bạn quay trở lại với không gian chăm sóc sức khỏe Đông Y Đường.</p>
+
+            <div style="text-align: left; background: #111; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <p style="margin-bottom: 10px;"><strong>Hạng thành viên:</strong> <span style="color: #d4af37;">Khách VIP (Thẻ Vàng)</span></p>
+                <p style="margin-bottom: 10px;"><strong>Đơn hàng gần đây:</strong> 0 đơn</p>
+                <p style="margin-bottom: 0;"><strong>Điểm tích lũy:</strong> 150 điểm</p>
+            </div>
+
+            <button id="btn-logout" style="background-color: transparent; border: 2px solid #f44336; color: #f44336; padding: 12px 30px; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;">
+                <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+            </button>
+
+        </div>
+    </div>
+
+    <footer class="footer" style="text-align: center; padding: 30px; background: #050505; border-top: 1px solid #222; color: #777;">
+        <p>© 2026 Đông Y Đường. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById("btn-logout").addEventListener("click", function() {
+            // Xóa trí nhớ "Đã đăng nhập" của trình duyệt
+            localStorage.removeItem("daDangNhap");
+            
+            alert("Bạn đã đăng xuất thành công!");
+            
+            // Đá người dùng về lại trang chủ
+            window.location.href = "index.html";
+        });
+    </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. In tên ra màn hình
+        const theHienThiTen = document.getElementById("ten-hien-thi");
+        if (theHienThiTen) {
+            const tenDaLuu = localStorage.getItem("tenNguoiDung");
+            if (tenDaLuu) {
+                theHienThiTen.innerHTML = "Xin chào, <span style='color: #8bc34a;'>" + tenDaLuu + "</span>!";
+            } else {
+                theHienThiTen.textContent = "Xin chào, Khách hàng thân thiết!";
+            }
+        }
+
+        // 2. Nút Đăng xuất
+        const btnLogout = document.getElementById("btn-logout");
+        if (btnLogout) {
+            btnLogout.addEventListener("click", function() {
+                localStorage.removeItem("daDangNhap");
+                localStorage.removeItem("tenNguoiDung");
+                alert("Đã đăng xuất!");
+                window.location.href = "index.html"; 
+            });
+        }
+    });
+</script>
+</body>
+</html>

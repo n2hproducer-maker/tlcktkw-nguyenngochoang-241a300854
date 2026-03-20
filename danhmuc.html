@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Mục Dược Liệu - Đông Y Đường</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; }
+        .breadcrumb { padding: 20px 5%; color: #888; font-size: 0.95rem; background: #111; border-bottom: 1px solid #222;}
+        .breadcrumb a { color: var(--primary-color, #7cb342); text-decoration: none; font-weight: bold;}
+        .category-layout { display: flex; gap: 30px; padding: 40px 5% 60px; }
+        
+        /* Sidebar Filter */
+        .sidebar-filter { width: 25%; background: #151515; padding: 25px; border-radius: 12px; border: 1px solid #333; height: fit-content; position: sticky; top: 100px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .sidebar-filter h3 { color: var(--primary-color, #7cb342); margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;}
+        .filter-group { margin-bottom: 30px; }
+        .filter-group label { display: flex; align-items: center; margin-bottom: 12px; color: #bbb; cursor: pointer; transition: 0.3s; font-size: 0.95rem; }
+        .filter-group label:hover { color: #fff; }
+        .filter-group input[type="checkbox"] { accent-color: var(--primary-color, #7cb342); margin-right: 10px; width: 16px; height: 16px; cursor: pointer;}
+        
+        /* Product List */
+        .product-list-container { width: 75%; }
+        .product-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #151515; padding: 15px 20px; border-radius: 10px; border: 1px solid #333; }
+        .product-header select { background: #0a0a0a; color: #fff; border: 1px solid #444; padding: 10px 15px; border-radius: 5px; outline: none; cursor: pointer; transition: 0.3s;}
+        
+        /* Product Card */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+        .product-card { 
+            background: #151515; border-radius: 12px; padding: 15px; text-align: left; 
+            border: 1px solid #2a2a2a; transition: all 0.4s ease; position: relative;
+            display: flex; flex-direction: column; height: 100%;
+        }
+        .product-card:hover { transform: translateY(-8px); border-color: var(--primary-color, #7cb342); box-shadow: 0 10px 20px rgba(124, 179, 66, 0.15); }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
+        .product-card h3 { color: #fff; font-size: 1.15rem; margin-bottom: 8px; font-weight: 600; }
+        .product-desc { color: #aaa; font-size: 0.9rem; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; flex-grow: 1; }
+        
+        .price-stock-wrapper { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-top: 10px; border-top: 1px dashed #333; }
+        .price { color: var(--primary-color, #7cb342); font-weight: bold; font-size: 1.25rem; }
+        
+        /* Nhãn trạng thái */
+        .stock-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;}
+        .stock-in { background: rgba(124, 179, 66, 0.2); color: #7cb342; border: 1px solid #7cb342; }
+        .stock-out { background: rgba(244, 67, 54, 0.1); color: #f44336; border: 1px solid #f44336; }
+        .stock-low { background: rgba(255, 152, 0, 0.1); color: #ff9800; border: 1px solid #ff9800; }
+
+        /* Nút mua hàng */
+        .btn-group { display: flex; gap: 8px; width: 100%; }
+        .btn-outline { flex: 1; background: transparent; color: var(--primary-color, #7cb342); border: 1px solid var(--primary-color, #7cb342); padding: 10px 5px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 0.85rem;}
+        .btn-outline:hover { background: rgba(124, 179, 66, 0.1); }
+        .btn-fill { flex: 1.5; background: var(--primary-color, #7cb342); color: #000; border: 1px solid var(--primary-color, #7cb342); padding: 10px 5px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 0.85rem;}
+        .btn-fill:hover { background: #689f38; box-shadow: 0 0 10px rgba(124,179,66,0.4); }
+        .btn-disabled { width: 100%; background: #333; color: #777; border: 1px solid #333; padding: 10px; border-radius: 8px; cursor: not-allowed; font-weight: bold; font-size: 0.9rem;}
+
+        .btn-filter { background: var(--primary-color, #7cb342); color: #000; border: none; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%; font-weight: bold; text-transform: uppercase;}
+        
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 50px; }
+        .pagination button { background: #151515; color: #fff; border: 1px solid #444; width: 45px; height: 45px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: bold;}
+        .pagination button.active, .pagination button:hover { background: var(--primary-color, #7cb342); color: #000; border-color: var(--primary-color, #7cb342); }
+
+        @media (max-width: 992px) {
+            .category-layout { flex-direction: column; }
+            .sidebar-filter, .product-list-container { width: 100%; position: relative; top: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header" style="background-color: #111; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100;">
+        <div class="logo" style="display: flex; align-items: center;">
+            <img src="image-Photoroom.png" alt="Logo Đông Y" style="width: 45px; height: 45px; margin-right: 12px; filter: drop-shadow(0 0 5px rgba(124, 179, 66, 0.6));">
+            <span style="font-size: 1.6rem; font-weight: bold; color: #fff; letter-spacing: 1px;">Đông Y Đường</span>
+        </div>
+        
+        <nav class="main-menu">
+            <ul style="display: flex; gap: 30px; list-style: none;">
+                <li><a href="index.html" style="color: #fff; text-decoration: none; text-transform: uppercase; font-size: 0.95rem; transition: 0.3s;">Trang chủ</a></li>
+                <li><a href="danhmuc.html" class="active" style="color: var(--primary-color, #7cb342); font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 0.95rem;">Danh mục sản phẩm</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <a href="dangnhap.html" title="Đăng nhập" style="color: #fff; font-size: 1.2rem; margin-left: 20px; text-decoration: none;"><i class="fa-solid fa-user"></i></a>
+            <a href="giohang.html" title="Giỏ hàng" style="color: #fff; font-size: 1.2rem; margin-left: 20px; text-decoration: none; position: relative;">
+                <i class="fa-solid fa-cart-shopping" style="transition: 0.3s;"></i> 
+                <span class="cart-count" style="background: var(--primary-color, #7cb342); color: #000; font-size: 0.7rem; padding: 2px 6px; border-radius: 50%; position: absolute; top: -10px; right: -10px; font-weight: bold;">0</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="index.html">Trang chủ</a> » <span>Kho Dược Liệu</span>
+    </div>
+
+    <main class="category-layout">
+        <aside class="sidebar-filter">
+            <div class="filter-group">
+                <div style="position: relative;">
+                    <input type="text" id="searchInput" placeholder="Tìm tên, công dụng..." style="width: 100%; background: #0a0a0a; color: #fff; border: 1px solid #444; padding: 12px 15px 12px 35px; border-radius: 8px; outline: none; transition: 0.3s;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 12px; top: 14px; color: #777;"></i>
+                </div>
+            </div>
+
+            <h3><i class="fa-solid fa-list-ul" style="margin-right: 8px;"></i> Danh Mục Vị Thuốc</h3>
+            <div class="filter-group">
+                <label><input type="checkbox" class="cat-filter" value="bothan"> Bổ thận - Tráng dương</label>
+                <label><input type="checkbox" class="cat-filter" value="hoathuyet"> Hoạt huyết - Tiêu ứ</label>
+                <label><input type="checkbox" class="cat-filter" value="boduong"> Đại bổ nguyên khí</label>
+                <label><input type="checkbox" class="cat-filter" value="lamdep"> Làm đẹp - Chống lão hóa</label>
+            </div>
+
+            <h3><i class="fa-solid fa-tags" style="margin-right: 8px;"></i> Mức Giá</h3>
+            <div class="filter-group">
+                <label><input type="checkbox" class="price-filter" value="thap"> Dưới 200.000đ</label>
+                <label><input type="checkbox" class="price-filter" value="trung"> 200.000đ - 500.000đ</label>
+                <label><input type="checkbox" class="price-filter" value="cao"> Trên 500.000đ</label>
+            </div>
+            
+            <button class="btn-filter" onclick="applyFilters()">Áp Dụng Bộ Lọc</button>
+        </aside>
+
+        <section class="product-list-container">
+            <div class="product-header">
+                <span style="color: #aaa; font-size: 1rem;">Tìm thấy <strong style="color: var(--primary-color, #7cb342); font-size: 1.2rem;">12</strong> dược liệu quý</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="sort" style="color: #aaa;">Sắp xếp:</label>
+                    <select id="sort">
+                        <option value="new">Phổ biến nhất</option>
+                        <option value="price-asc">Giá: Thấp đến Cao</option>
+                        <option value="price-desc">Giá: Cao đến Thấp</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="product-grid" id="productGrid">
+                
+                <div class="product-card" data-category="bothan">
+                    <img src="https://suckhoedoisong.qltns.mediacdn.vn/Images/nguyenkhanh/2019/08/27/thuc_dia_vi_thuoc_bo_than_2.jpg" alt="Thục Địa">
+                    <h3>Thục Địa Thượng Hạng</h3>
+                    <p class="product-desc">Vị thuốc đầu bảng bồi bổ can thận, ích tinh huyết, đen râu tóc. Được cửu chưng cửu sái kỹ lưỡng.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">150.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Thục Địa Thượng Hạng', 150000, 'https://suckhoedoisong.qltns.mediacdn.vn/Images/nguyenkhanh/2019/08/27/thuc_dia_vi_thuoc_bo_than_2.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="boduong">
+                    <img src="https://cdnv2.tgdd.vn/mwg-static/common/News/1421320/hoai-son-co-tac-dung-gi-loi-4.jpg" alt="Hoài Sơn">
+                    <h3>Hoài Sơn (Củ Mài)</h3>
+                    <p class="product-desc">Kiện tỳ, dưỡng vị, chỉ tả, bổ phế. Cực kỳ tốt cho người tiêu hóa kém, cơ thể suy nhược sau ốm dậy.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">220.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Hoài Sơn (Củ Mài)', 220000, 'https://cdnv2.tgdd.vn/mwg-static/common/News/1421320/hoai-son-co-tac-dung-gi-loi-4.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="hoathuyet">
+                    <img src="https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2023/3/6/image-1593363935huong-phu-dai-dien1-16781107909261849263165.png" alt="Hương Phụ">
+                    <h3>Hương Phụ Nam</h3>
+                    <p class="product-desc">"Soái ca" của phụ khoa Đông y. Hành khí giải uất, điều kinh chỉ thống, giải quyết tận gốc chứng đau bụng kinh.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">180.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-out">Hết hàng</span>
+                    </div>
+                    <button class="btn-disabled" disabled><i class="fa-solid fa-bell"></i> Báo khi có hàng</button>
+                </div>
+
+                <div class="product-card" data-category="bothan">
+                    <img src="https://thaoduocvn.net/wp-content/uploads/2023/04/tuc-doan.jpg" alt="Tục Đoạn">
+                    <h3>Rễ Tục Đoạn</h3>
+                    <p class="product-desc">Chuyên trị can thận hư, mạnh gân cốt, "nối" gân xương đứt gãy. Rất tốt cho người lớn tuổi đau nhức xương khớp.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">195.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Rễ Tục Đoạn', 195000, 'https://thaoduocvn.net/wp-content/uploads/2023/04/tuc-doan.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="boduong">
+                    <img src="https://thuocdantoc.vn/wp-content/uploads/2019/06/tran-bi-6.jpg" alt="Trần Bì">
+                    <h3>Trần Bì Lâu Năm</h3>
+                    <p class="product-desc">Vỏ quýt sấy khô lâu năm. Lý khí, kiện tỳ, hóa đờm cực mạnh. Vị thuốc không thể thiếu trong các bài thuốc ho.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">120.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-low">Sắp hết (2kg)</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Trần Bì Lâu Năm', 120000, 'https://thuocdantoc.vn/wp-content/uploads/2019/06/tran-bi-6.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="boduong">
+                    <img src="https://suckhoedoisong.qltns.mediacdn.vn/Images/nguyenkhanh/2018/12/09/sa_nhan.jpg" alt="Sa Nhân">
+                    <h3>Sa Nhân Tím</h3>
+                    <p class="product-desc">Ôn trung, hành khí, chỉ tả, an thai. Đặc trị tỳ vị hư hàn, ăn không tiêu, chướng bụng đầy hơi.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">450.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Sa Nhân Tím', 450000, 'https://suckhoedoisong.qltns.mediacdn.vn/Images/nguyenkhanh/2018/12/09/sa_nhan.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="lamdep">
+                    <img src="https://cdn.medigoapp.com/product/tinh_dau_hoa_anh_thao_la_gi_tac_dung_cach_uong_tinh_dau_hoa_anh_thao_1_800x450_ee8b45b512.jpg" alt="Hoa Anh Thảo">
+                    <h3>Tinh Dầu Hoa Anh Thảo</h3>
+                    <p class="product-desc">Cân bằng nội tiết tố nữ, làm đẹp da, mượt tóc, giảm đáng kể các triệu chứng bốc hỏa tiền mãn kinh.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">550.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/lọ</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Tinh Dầu Hoa Anh Thảo', 550000, 'https://cdn.medigoapp.com/product/tinh_dau_hoa_anh_thao_la_gi_tac_dung_cach_uong_tinh_dau_hoa_anh_thao_1_800x450_ee8b45b512.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="lamdep">
+                    <img src="https://mediworld.vn/wp-content/uploads/2023/08/cong-dung-cua-chiet-xuat-hat-nho-doi-voi-suc-khoe-va-sac-dep.jpg" alt="Hạt Nho">
+                    <h3>Chiết Xuất Hạt Nho</h3>
+                    <p class="product-desc">Chứa OPCs chống oxy hóa cực mạnh (gấp 20 lần Vitamin C), bảo vệ làn da khỏi lão hóa và tia UV.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">320.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/hộp</span></span>
+                        <span class="stock-status stock-out">Hết hàng</span>
+                    </div>
+                    <button class="btn-disabled" disabled><i class="fa-solid fa-bell"></i> Báo khi có hàng</button>
+                </div>
+
+                <div class="product-card" data-category="boduong">
+                    <img src="https://www.vinmec.com/static/uploads/20210413_153606_205667_nam_linh_chi_max_1800x1800_jpg_5038c304d4.jpg" alt="Nấm Linh Chi">
+                    <h3>Nấm Linh Chi Đỏ Thái Lát</h3>
+                    <p class="product-desc">Thượng phẩm an thần, bảo vệ gan, ổn định huyết áp và tăng cường hệ miễn dịch tự nhiên hiệu quả nhất.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">1.200.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Nấm Linh Chi Đỏ Thái Lát', 1200000, 'https://www.vinmec.com/static/uploads/20210413_153606_205667_nam_linh_chi_max_1800x1800_jpg_5038c304d4.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="lamdep">
+                    <img src="https://cafefcdn.com/203337114487263232/2023/4/29/harper-bazaar-cach-su-dung-nhan-sam-tai-tao-da-1-8824-1682733866793-1682733867009534560201.jpg" alt="Nhân Sâm">
+                    <h3>Nhân Sâm Thượng Hạng</h3>
+                    <p class="product-desc">Đại bổ nguyên khí. Phục hồi sinh lực nhanh chóng, đồng thời giúp da dẻ hồng hào, căng mọng từ bên trong.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">2.500.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/hộp</span></span>
+                        <span class="stock-status stock-low">Sắp hết (1 hộp)</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Nhân Sâm Thượng Hạng', 2500000, 'https://cafefcdn.com/203337114487263232/2023/4/29/harper-bazaar-cach-su-dung-nhan-sam-tai-tao-da-1-8824-1682733866793-1682733867009534560201.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="thaidoc">
+                    <img src="https://login.medlatec.vn//ImagePath/images/20230425/20230425_Bot-nghe-do-rat-tot-cho-nguoi-bi-viem-loet-da-day.jpg" alt="Bột Nghệ Đỏ">
+                    <h3>Bột Nghệ Đỏ Nguyên Chất</h3>
+                    <p class="product-desc">Hàm lượng Curcumin cao gấp 3 lần nghệ vàng. Đặc trị viêm loét dạ dày tá tràng, nhanh liền sẹo.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">280.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Bột Nghệ Đỏ Nguyên Chất', 280000, 'https://login.medlatec.vn//ImagePath/images/20230425/20230425_Bot-nghe-do-rat-tot-cho-nguoi-bi-viem-loet-da-day.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+                <div class="product-card" data-category="boduong">
+                    <img src="https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2022/3/5/toi-den-16464789803541174904737.jpg" alt="Tỏi Đen">
+                    <h3>Tỏi Đen Lên Men 60 Ngày</h3>
+                    <p class="product-desc">Dược tính cao gấp nhiều lần tỏi tươi. Giảm mỡ máu, ổn định tim mạch, phòng chống gốc tự do gây hại.</p>
+                    <div class="price-stock-wrapper">
+                        <span class="price">650.000đ<span style="font-size: 0.8rem; color:#777; font-weight:normal;">/kg</span></span>
+                        <span class="stock-status stock-in">Còn hàng</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-outline"><i class="fa-solid fa-eye"></i> Chi Tiết</button>
+                        <button class="btn-fill" onclick="addToCart('Tỏi Đen Lên Men 60 Ngày', 650000, 'https://suckhoedoisong.qltns.mediacdn.vn/324455921873985536/2022/3/5/toi-den-16464789803541174904737.jpg')"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pagination">
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button><i class="fa-solid fa-angle-right"></i></button>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background-color: #0a0a0a; padding: 40px 5%; border-top: 1px solid #222; text-align: center;">
+        <p style="color: #666;">© 2026 Đông Y Đường - Tinh Hoa Thảo Dược Cổ Truyền</p>
+    </footer>
+
+    <script src="script.js"></script>
+    
+<script>
+function addToCart(name, price, img) {
+    let cart = JSON.parse(localStorage.getItem('dongy_cart')) || [];
+    let existingItem = cart.find(item => item.name === name);
+    if (existingItem) { existingItem.qty += 1; } 
+    else { cart.push({ name: name, price: price, img: img, qty: 1 }); }
+    localStorage.setItem('dongy_cart', JSON.stringify(cart));
+    updateCartIcon();
+    
+    // Hiệu ứng giật icon
+    const cartIcon = document.querySelector(".fa-cart-shopping");
+    if(cartIcon) {
+        cartIcon.style.transform = "scale(1.5)";
+        cartIcon.style.color = "#7cb342";
+        setTimeout(() => { cartIcon.style.transform = "scale(1)"; cartIcon.style.color = "#fff"; }, 300);
+    }
+}
+
+function updateCartIcon() {
+    let cart = JSON.parse(localStorage.getItem('dongy_cart')) || [];
+    let totalQty = 0;
+    cart.forEach(item => { totalQty += item.qty; });
+    let cartCountElements = document.querySelectorAll('.cart-count');
+    cartCountElements.forEach(el => { el.innerText = totalQty; });
+}
+
+// Chạy khi load trang danh mục
+window.addEventListener('DOMContentLoaded', updateCartIcon);
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tìm cái icon Tài khoản trên Header (Dựa vào thuộc tính title="Tài khoản")
+        const iconTaiKhoan = document.querySelector('a[title="Tài khoản"]');
+        
+        if (iconTaiKhoan) {
+            // Kiểm tra xem trình duyệt có nhớ là "ĐÃ ĐĂNG NHẬP" chưa?
+            if (localStorage.getItem("daDangNhap") === "true") {
+                // 1. Đổi link trỏ về trang thông tin cá nhân
+                iconTaiKhoan.href = "taikhoan.html"; 
+                
+                // 2. Đổi màu icon sang xanh lá để báo hiệu đã đăng nhập
+                iconTaiKhoan.style.color = "#7cb342"; 
+            } else {
+                // Nếu chưa đăng nhập, giữ nguyên link tới trang đăng nhập
+                iconTaiKhoan.href = "dangnhap.html";
+            }
+        }
+    });
+</script>
+</body>
+</html>

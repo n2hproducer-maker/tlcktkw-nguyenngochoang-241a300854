@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng Của Bạn - Đông Y Đường</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS Giao diện Giỏ hàng - Đen Huyền Bí */
+        body { background-color: #0a0a0a; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; }
+        .breadcrumb { padding: 20px 5%; color: #888; font-size: 0.95rem; background: #111; border-bottom: 1px solid #222;}
+        .breadcrumb a { color: var(--primary-color, #7cb342); text-decoration: none; font-weight: bold;}
+        
+        .cart-layout { display: flex; gap: 30px; padding: 40px 5% 80px; align-items: flex-start; }
+        
+        /* Cột trái: Danh sách */
+        .cart-items-container { flex: 7; background: #151515; border-radius: 12px; border: 1px solid #333; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .cart-header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; font-weight: bold; color: var(--primary-color, #7cb342); text-transform: uppercase; font-size: 1.1rem; }
+        
+        .cart-item { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; padding: 20px 0; transition: 0.4s ease; }
+        .cart-item:hover { background: rgba(255, 255, 255, 0.02); }
+        
+        .item-info { display: flex; align-items: center; gap: 20px; flex: 2; }
+        .item-info img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #444; }
+        .item-details h4 { color: #fff; font-size: 1.1rem; margin-bottom: 5px; }
+        
+        .item-price { flex: 1; color: #ccc; font-weight: bold; text-align: center;}
+        
+        /* Bộ đếm số lượng */
+        .quantity-control { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .quantity-control button { background: #222; color: #fff; border: 1px solid #444; width: 30px; height: 30px; border-radius: 5px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .quantity-control button:hover { background: var(--primary-color, #7cb342); color: #000; border-color: var(--primary-color, #7cb342); }
+        .quantity-control input { width: 40px; height: 30px; text-align: center; background: #0a0a0a; color: #fff; border: 1px solid #444; border-radius: 5px; font-weight: bold; outline: none;}
+        
+        .item-total { flex: 1; color: var(--primary-color, #7cb342); font-weight: bold; font-size: 1.1rem; text-align: center; }
+        
+        .btn-remove { background: transparent; color: #ff4d4d; border: none; font-size: 1.2rem; cursor: pointer; transition: 0.3s; padding: 10px; border-radius: 5px;}
+        .btn-remove:hover { background: rgba(255, 77, 77, 0.1); transform: scale(1.1); }
+
+        .continue-shopping { display: inline-block; margin-top: 25px; color: var(--primary-color, #7cb342); text-decoration: none; font-weight: bold; transition: 0.3s; padding: 10px 20px; border: 1px solid var(--primary-color, #7cb342); border-radius: 8px;}
+        .continue-shopping:hover { background: var(--primary-color, #7cb342); color: #000; box-shadow: 0 0 10px rgba(124, 179, 66, 0.4); }
+
+        /* Cột phải: Tóm tắt */
+        .order-summary { flex: 3; background: #151515; border-radius: 12px; border: 1px solid #333; padding: 25px; height: fit-content; position: sticky; top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .order-summary h3 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: #bbb; font-size: 1.05rem; }
+        .summary-row.total { border-top: 1px dashed #444; padding-top: 15px; color: #fff; font-size: 1.3rem; font-weight: bold; margin-top: 10px; }
+        .summary-row.total .total-price { color: var(--primary-color, #7cb342); }
+        
+        .discount-code { display: flex; gap: 10px; margin-bottom: 25px; margin-top: 20px;}
+        .discount-code input { flex: 1; background: #0a0a0a; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; outline: none; text-transform: uppercase; transition: 0.3s;}
+        .discount-code input:focus { border-color: var(--primary-color, #7cb342); }
+        .discount-code button { background: #333; color: #fff; border: none; padding: 0 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;}
+        .discount-code button:hover { background: #555; }
+
+        .btn-checkout { display: block; width: 100%; background: var(--primary-color, #7cb342); color: #000; text-align: center; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; text-decoration: none; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; margin-top: 10px;}
+        .btn-checkout:hover { background: #689f38; box-shadow: 0 0 15px rgba(124, 179, 66, 0.5); transform: translateY(-3px); }
+
+        @media (max-width: 992px) {
+            .cart-layout { flex-direction: column; }
+            .cart-items-container, .order-summary { width: 100%; position: relative; top: 0; }
+            .cart-header { display: none; }
+            .cart-item { flex-wrap: wrap; gap: 15px; position: relative;}
+            .item-info { min-width: 100%; }
+            .item-price, .item-total { display: none; }
+            .btn-remove { position: absolute; top: 15px; right: 0; }
+        }
+    </style>
+</head>
+<body>
+
+   <header class="header">
+    <a href="index.html" class="logo">
+        <img src="image-Photoroom.png" alt="Logo Đông Y Đường">
+        <span>ĐÔNG Y ĐƯỜNG</span>
+    </a>
+
+    <div class="main-menu"></div> 
+
+    <div class="header-actions">
+        
+        <a href="danhmuc.html" class="menu-san-pham">
+            <i class="fas fa-bars"></i> SẢN PHẨM
+        </a>
+
+        <a href="dangnhap.html" title="Tài khoản">
+            <i class="fas fa-user"></i>
+        </a>
+
+        <a href="giohang.html" title="Giỏ hàng">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">3</span>
+        </a>
+    </div>
+</header>
+
+    <div class="breadcrumb">
+        <a href="index.html">Trang chủ</a> » <span>Giỏ hàng của bạn</span>
+    </div>
+
+    <main class="cart-layout">
+        
+        <div class="cart-items-container">
+            <div class="cart-header">
+                <span style="flex: 2;">Sản Phẩm</span>
+                <span style="flex: 1; text-align: center;">Đơn Giá</span>
+                <span style="flex: 1; text-align: center;">Số Lượng</span>
+                <span style="flex: 1; text-align: center;">Thành Tiền</span>
+                <span style="width: 40px;"></span>
+            </div>
+
+            <div id="cart-list"></div>
+
+            <a href="danhmuc.html" class="continue-shopping"><i class="fa-solid fa-arrow-left-long"></i> Tiếp tục chọn dược liệu</a>
+        </div>
+
+        <div class="order-summary">
+            <h3>Tóm Tắt Đơn Hàng</h3>
+            
+            <div class="summary-row">
+                <span>Tạm tính (<span id="total-items-count">0</span> sản phẩm):</span>
+                <span id="subtotal-price">0đ</span>
+            </div>
+            <div class="summary-row">
+                <span>Phí giao hàng:</span>
+                <span>Miễn phí</span>
+            </div>
+            
+            <div class="discount-code">
+                <input type="text" id="couponInput" placeholder="Nhập mã ưu đãi (nếu có)">
+                <button onclick="applyCoupon()">Áp dụng</button>
+            </div>
+            <p id="coupon-msg" style="color: var(--primary-color, #7cb342); font-size: 0.9rem; margin-top: -15px; margin-bottom: 15px; display: none;"><i class="fa-solid fa-circle-check"></i> Đã áp dụng giảm giá 10%</p>
+
+            <div class="summary-row total">
+                <span>Tổng Cộng:</span>
+                <span class="total-price" id="final-price">0đ</span>
+            </div>
+
+            <p style="color: #666; font-size: 0.85rem; text-align: center; margin-bottom: 20px; font-style: italic;">(Đã bao gồm VAT nếu có)</p>
+
+            <a href="thanhtoan.html" class="btn-checkout" id="btn-checkout">Tiến Hành Thanh Toán <i class="fa-solid fa-shield-halved" style="margin-left: 8px;"></i></a>
+            
+            <div style="text-align: center; margin-top: 20px; color: #555; font-size: 1.5rem; display: flex; justify-content: center; gap: 15px;">
+                <i class="fa-brands fa-cc-visa"></i>
+                <i class="fa-brands fa-cc-mastercard"></i>
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+        </div>
+
+    </main>
+
+    <footer style="background-color: #0a0a0a; padding: 30px 5%; border-top: 1px solid #222; text-align: center;">
+        <p style="color: #666;">© 2026 Đông Y Đường - Tinh Hoa Thảo Dược Cổ Truyền</p>
+    </footer>
+
+    <script>
+        let isCouponApplied = false;
+
+        // Hàm 1: Cập nhật icon số lượng giỏ hàng
+        function updateCartIcon() {
+            let cart = JSON.parse(localStorage.getItem('dongy_cart')) || [];
+            let totalQty = 0;
+            cart.forEach(item => { totalQty += item.qty; });
+            document.querySelector('.cart-count').innerText = totalQty;
+        }
+
+        // Hàm 2: Vẽ giao diện danh sách sản phẩm trong giỏ
+        function renderCartPage() {
+            let cartList = document.getElementById('cart-list');
+            let cart = JSON.parse(localStorage.getItem('dongy_cart')) || [];
+
+            // Nếu giỏ hàng trống
+            if (cart.length === 0) {
+                cartList.innerHTML = '<p style="text-align:center; padding: 50px 0; color: #888;">Giỏ hàng của bạn đang trống.<br><br><i class="fa-solid fa-cart-arrow-down" style="font-size: 3rem; color: #444;"></i></p>';
+                document.getElementById('subtotal-price').innerText = '0đ';
+                document.getElementById('final-price').innerText = '0đ';
+                document.getElementById('total-items-count').innerText = '0';
+                
+                // Khóa nút thanh toán
+                let btnCheckout = document.getElementById('btn-checkout');
+                btnCheckout.style.pointerEvents = 'none';
+                btnCheckout.style.background = '#333';
+                btnCheckout.style.color = '#777';
+                return;
+            }
+
+            // Nếu có hàng, mở khóa nút thanh toán và vẽ HTML
+            document.getElementById('btn-checkout').style.pointerEvents = 'auto';
+            document.getElementById('btn-checkout').style.background = 'var(--primary-color)';
+            document.getElementById('btn-checkout').style.color = '#000';
+
+            let html = '';
+            let subtotal = 0;
+            let totalItems = 0;
+
+            cart.forEach((item, index) => {
+                let itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
+                totalItems += item.qty;
+
+                html += `
+                <div class="cart-item">
+                    <div class="item-info">
+                        <img src="${item.img}" alt="${item.name}">
+                        <div class="item-details">
+                            <h4>${item.name}</h4>
+                        </div>
+                    </div>
+                    <div class="item-price">${item.price.toLocaleString('vi-VN')}đ</div>
+                    <div class="quantity-control">
+                        <button onclick="changeQty(${index}, -1)">-</button>
+                        <input type="number" value="${item.qty}" readonly>
+                        <button onclick="changeQty(${index}, 1)">+</button>
+                    </div>
+                    <div class="item-total">${itemTotal.toLocaleString('vi-VN')}đ</div>
+                    <button class="btn-remove" onclick="removeCartItem(${index})" title="Xóa khỏi giỏ"><i class="fa-solid fa-trash-can"></i></button>
+                </div>`;
+            });
+
+            cartList.innerHTML = html;
+            
+            // Xử lý giá tiền (Có áp dụng mã giảm giá không)
+            document.getElementById('total-items-count').innerText = totalItems;
+            document.getElementById('subtotal-price').innerText = subtotal.toLocaleString('vi-VN') + 'đ';
+            
+            let finalTotal = subtotal;
+            if (isCouponApplied) {
+                finalTotal = subtotal * 0.9; // Giảm 10%
+            }
+            document.getElementById('final-price').innerText = finalTotal.toLocaleString('vi-VN') + 'đ';
+            
+            updateCartIcon();
+        }
+
+        // Hàm 3: Tăng giảm số lượng
+        function changeQty(index, change) {
+            let cart = JSON.parse(localStorage.getItem('dongy_cart'));
+            if (cart[index].qty + change > 0) {
+                cart[index].qty += change;
+                localStorage.setItem('dongy_cart', JSON.stringify(cart));
+                renderCartPage(); 
+            }
+        }
+
+        // Hàm 4: Xóa sản phẩm
+        function removeCartItem(index) {
+            let cart = JSON.parse(localStorage.getItem('dongy_cart'));
+            cart.splice(index, 1); 
+            localStorage.setItem('dongy_cart', JSON.stringify(cart));
+            renderCartPage();
+        }
+
+        // Hàm 5: Áp mã giảm giá
+        function applyCoupon() {
+            let code = document.getElementById('couponInput').value.trim().toUpperCase();
+            if(code !== '') {
+                isCouponApplied = true;
+                document.getElementById('coupon-msg').style.display = 'block';
+                renderCartPage(); // Chạy lại hàm vẽ để cập nhật giá
+            } else {
+                alert("Vui lòng nhập mã giảm giá hợp lệ!");
+            }
+        }
+
+        // Tự động load dữ liệu khi vào trang
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCartPage();
+        });
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tìm cái icon Tài khoản trên Header (Dựa vào thuộc tính title="Tài khoản")
+        const iconTaiKhoan = document.querySelector('a[title="Tài khoản"]');
+        
+        if (iconTaiKhoan) {
+            // Kiểm tra xem trình duyệt có nhớ là "ĐÃ ĐĂNG NHẬP" chưa?
+            if (localStorage.getItem("daDangNhap") === "true") {
+                // 1. Đổi link trỏ về trang thông tin cá nhân
+                iconTaiKhoan.href = "taikhoan.html"; 
+                
+                // 2. Đổi màu icon sang xanh lá để báo hiệu đã đăng nhập
+                iconTaiKhoan.style.color = "#7cb342"; 
+            } else {
+                // Nếu chưa đăng nhập, giữ nguyên link tới trang đăng nhập
+                iconTaiKhoan.href = "dangnhap.html";
+            }
+        }
+    });
+</script>
+</body>
+</html>

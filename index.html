@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đông Y Đường - Tinh Hoa Y Học Cổ Truyền</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS dành riêng cho các phần giới thiệu trên Trang Chủ */
+        .hero {
+            position: relative;
+            height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: url('https://png.pngtree.com/thumb_back/fh260/back_our/20190620/ourmid/pngtree-chinese-medicine-exhibition-board-winter-disease-summer-treatment-chinese-herbal-medicine-image_162906.jpg') no-repeat center center/cover;
+            background-attachment: fixed; /* Hiệu ứng Parallax mượt mà */
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.85); /* Nền đen huyền bí đậm hơn */
+        }
+        .hero-content {
+            position: relative; z-index: 1; max-width: 900px; padding: 20px;
+            animation: fadeIn 1.5s ease-out;
+        }
+        .hero-content h1 { font-size: 4rem; color: var(--primary-color); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 20px rgba(124, 179, 66, 0.5);}
+        .hero-content p { font-size: 1.3rem; color: #ccc; margin-bottom: 40px; line-height: 1.8; }
+        .btn-large {
+            display: inline-block; padding: 15px 45px; font-size: 1.2rem; font-weight: bold;
+            background: transparent; color: var(--primary-color); text-decoration: none;
+            border: 2px solid var(--primary-color); border-radius: 30px; transition: 0.4s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-large:hover { background: var(--primary-color); color: #000; box-shadow: var(--glow-effect); transform: translateY(-3px); }
+
+        /* Section Giới Thiệu Đông Y */
+        .about-section { padding: 80px 5%; display: flex; align-items: center; gap: 50px; }
+        .about-text { flex: 1; }
+        .about-text h2 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px; }
+        .about-text p { color: var(--text-color); font-size: 1.1rem; line-height: 1.8; margin-bottom: 15px; text-align: justify; }
+        .about-image { flex: 1; position: relative; }
+        .about-image img { width: 100%; border-radius: 15px; box-shadow: var(--glow-effect); border: 1px solid #333; }
+        
+        /* Section Triết lý Âm Dương */
+        .philosophy { background: #111; padding: 80px 5%; text-align: center; border-top: 1px solid #222; border-bottom: 1px solid #222;}
+        .philosophy h2 { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 50px; }
+        .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .phil-card { background: #1a1a1a; padding: 40px 20px; border-radius: 15px; border: 1px solid #333; transition: 0.4s; }
+        .phil-card:hover { transform: translateY(-10px); border-color: var(--primary-color); box-shadow: var(--glow-effect); }
+        .phil-card i { font-size: 3.5rem; color: var(--primary-color); margin-bottom: 20px; }
+        .phil-card h3 { color: #fff; font-size: 1.5rem; margin-bottom: 15px; }
+        .phil-card p { color: var(--text-muted); line-height: 1.6; }
+
+        /* Banner Call to Action chuyển sang trang Danh mục */
+        .cta-banner { padding: 100px 5%; text-align: center; background: linear-gradient(rgba(13,13,13,0.9), rgba(13,13,13,0.9)), url('https://png.pngtree.com/thumb_back/fh260/back_our/20190620/ourmid/pngtree-chinese-medicine-exhibition-board-winter-disease-summer-treatment-chinese-herbal-medicine-image_162906.jpg') center/cover; }
+        .cta-banner h2 { font-size: 3rem; color: #fff; margin-bottom: 20px; }
+        .cta-banner p { font-size: 1.2rem; color: #aaa; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .about-section { flex-direction: column; }
+            .philosophy-grid { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+    <a href="index.html" class="logo">
+        <img src="image-Photoroom.png" alt="Logo Đông Y Đường">
+        <span>ĐÔNG Y ĐƯỜNG</span>
+    </a>
+
+    <div class="main-menu"></div> 
+
+    <div class="header-actions">
+        
+        <a href="danhmuc.html" class="menu-san-pham">
+            <i class="fas fa-bars"></i> SẢN PHẨM
+        </a>
+
+        <a href="dangnhap.html" title="Tài khoản">
+            <i class="fas fa-user"></i>
+        </a>
+
+        <a href="giohang.html" title="Giỏ hàng">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">3</span>
+        </a>
+    </div>
+</header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Cội Nguồn Sức Khỏe<br>Từ Mẹ Thiên Nhiên</h1>
+            <p>Y học cổ truyền không chỉ là chữa bệnh, mà là nghệ thuật lắng nghe cơ thể. Chúng tôi mang đến những tinh hoa thảo dược ngàn năm, giúp bạn cân bằng thể chất và tinh thần, khôi phục sinh khí từ sâu bên trong.</p>
+            <a href="https://youmed.vn/tin-tuc/y-hoc-co-truyen/duoc-lieu/" class="btn-large" target="_blank" rel="noopener noreferrer">Khám Phá Tủ Thuốc Tự Nhiên</a>
+        </div>
+    </section>
+
+    <section class="about-section" id="kienthuc">
+        <div class="about-text">
+            <h2>Tinh Hoa Y Học Cổ Truyền</h2>
+            <p>Được hình thành và phát triển qua hàng ngàn năm lịch sử, Y học cổ truyền (Đông y) là một hệ thống y lý sâu sắc, coi con người là một tiểu vũ trụ thu nhỏ. Khác với Tây y thường tập trung vào việc loại trừ triệu chứng, Đông y hướng tới việc tìm ra cội rễ của căn bệnh.</p>
+            <p>Phương pháp của chúng tôi là sử dụng hoàn toàn thảo mộc thiên nhiên – những món quà vô giá của đất trời, kết hợp cùng quy trình sao tẩm, bào chế thủ công nghiêm ngặt. Mỗi vị thuốc không chỉ mang trong mình dược tính mà còn chứa đựng khí tiết của âm dương ngũ hành.</p>
+            <p>Đông Y Đường tự hào là cầu nối mang những giá trị nguyên bản đó đến với nhịp sống hiện đại của bạn, giúp bồi bổ nguyên khí, nâng cao chính khí, đẩy lùi tà khí.</p>
+        </div>
+        <div class="about-image">
+            <img src="ee-Photoroom.png" alt="Bào chế Đông Y">
+        </div>
+    </section>
+
+    <section class="philosophy">
+        <h2>Triết Lý Dưỡng Sinh & Trị Liệu</h2>
+        <div class="philosophy-grid">
+            <div class="phil-card">
+                <i class="fa-solid fa-yin-yang"></i>
+                <h3>Cân Bằng Âm Dương</h3>
+                <p>Bệnh tật sinh ra khi Âm - Dương mất cân bằng. Các vị thuốc của chúng tôi được phân loại theo Tứ Khí (Hàn, Lương, Ôn, Nhiệt) và Ngũ Vị nhằm lập lại trạng thái cân bằng hoàn hảo cho cơ thể.</p>
+            </div>
+            <div class="phil-card">
+                <i class="fa-brands fa-pagelines"></i>
+                <h3>Thuận Theo Tự Nhiên</h3>
+                <p>Tôn trọng quy luật sinh trưởng của cây cỏ. Dược liệu được thu hái đúng mùa, đúng thời điểm để đạt được hàm lượng hoạt chất cao nhất, không sử dụng hóa chất kích thích hay chất bảo quản.</p>
+            </div>
+            <div class="phil-card">
+                <i class="fa-solid fa-fire-burner"></i>
+                <h3>Bào Chế Bí Truyền</h3>
+                <p>Từng loại thảo dược được áp dụng các phương pháp sao, tẩm, chưng, sấy, ngâm... phù hợp để loại bỏ độc tính, giảm tác dụng phụ và dẫn thuốc vào đúng Kinh Mạch cần điều trị.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <h2>Bắt Đầu Hành Trình Chăm Sóc Sức Khỏe</h2>
+        <p>Từ những vị thuốc bồi bổ cơ thể hàng ngày như Nhân Sâm, Nấm Linh Chi đến các liệu trình hoạt huyết, bổ thận chuyên sâu. Hãy để thiên nhiên chăm sóc bạn.</p>
+        <a href="danhmuc.html" class="btn-large" style="background: var(--primary-color); color: #000; border-color: var(--primary-color);">Vào Trang Danh Mục Sản Phẩm</a>
+    </section>
+
+    <footer style="background-color: #050505; padding: 60px 5% 30px; border-top: 1px solid #222;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; margin-bottom: 40px;">
+            <div style="width: 35%;">
+                <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                    <img src="image-Photoroom.png" alt="Logo" style="width: 40px; margin-right: 10px;">
+                    <h3 style="color: var(--primary-color); font-size: 1.5rem;">Đông Y Đường</h3>
+                </div>
+                <p style="color: var(--text-muted); line-height: 1.8;">Lưu giữ tinh hoa y học ngàn đời. Chúng tôi cung cấp các loại dược liệu quý hiếm, chuẩn sạch, đảm bảo dược tính cao nhất để phục vụ sức khỏe cộng đồng.</p>
+            </div>
+            <div>
+                <h4 style="color: #fff; margin-bottom: 20px; font-size: 1.2rem;">Khám Phá</h4>
+                <ul style="list-style: none; color: var(--text-muted); line-height: 2.5;">
+                    <li><a href="index.html" style="color: inherit; text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-muted)'">Trang Chủ</a></li>
+                    <li><a href="danhmuc.html" style="color: inherit; text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-muted)'">Danh Mục Sản Phẩm</a></li>
+                    <li><a href="dangnhap.html" style="color: inherit; text-decoration: none; transition: 0.3s;" onmouseover="this.style.color='var(--primary-color)'" onmouseout="this.style.color='var(--text-muted)'">Tài khoản của bạn</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="color: #fff; margin-bottom: 20px; font-size: 1.2rem;">Hỗ Trợ Khách Hàng</h4>
+                <p style="color: var(--text-muted); line-height: 2;"><i class="fa-solid fa-phone" style="color: var(--primary-color); margin-right: 10px;"></i> Tư vấn: 0909 123 456</p>
+                <p style="color: var(--text-muted); line-height: 2;"><i class="fa-solid fa-envelope" style="color: var(--primary-color); margin-right: 10px;"></i> Email: lienhe@dongyduong.vn</p>
+                <p style="color: var(--text-muted); line-height: 2;"><i class="fa-solid fa-location-dot" style="color: var(--primary-color); margin-right: 10px;"></i> Địa chỉ: Quận 1, TP. Hồ Chí Minh</p>
+            </div>
+        </div>
+        <div style="text-align: center; border-top: 1px solid #222; padding-top: 20px; color: #666; font-size: 0.9rem;">
+            © 2026 Bản quyền thuộc về Đông Y Đường. All rights reserved. Thiết kế Dark Mode tối ưu trải nghiệm.
+        </div>
+    </footer>
+
+    <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="position: fixed; bottom: 30px; right: 30px; background: var(--primary-color); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; cursor: pointer; display: none; box-shadow: var(--glow-effect); z-index: 999; transition: 0.3s;"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <script>
+        // Hiển thị nút cuộn trang
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                document.getElementById("backToTop").style.display = "block";
+            } else {
+                document.getElementById("backToTop").style.display = "none";
+            }
+        };
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tìm cái icon Tài khoản trên Header (Dựa vào thuộc tính title="Tài khoản")
+        const iconTaiKhoan = document.querySelector('a[title="Tài khoản"]');
+        
+        if (iconTaiKhoan) {
+            // Kiểm tra xem trình duyệt có nhớ là "ĐÃ ĐĂNG NHẬP" chưa?
+            if (localStorage.getItem("daDangNhap") === "true") {
+                // 1. Đổi link trỏ về trang thông tin cá nhân
+                iconTaiKhoan.href = "taikhoan.html"; 
+                
+                // 2. Đổi màu icon sang xanh lá để báo hiệu đã đăng nhập
+                iconTaiKhoan.style.color = "#7cb342"; 
+            } else {
+                // Nếu chưa đăng nhập, giữ nguyên link tới trang đăng nhập
+                iconTaiKhoan.href = "dangnhap.html";
+            }
+        }
+    });
+</script>
+</body>
+</html>
